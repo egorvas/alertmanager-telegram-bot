@@ -522,7 +522,7 @@
         "type": "function",
         "z": "2feab401.8786cc",
         "name": "duration",
-        "func": "let miliseconds = new Date().getTime()-Date.parse(msg.payload.startsAt)\nlet days = Math.floor(miliseconds/(24*60*60*1000))\nmiliseconds = miliseconds - (24*60*60*1000) * days\nlet hours = Math.floor(miliseconds/(60*60*1000))\nmiliseconds = miliseconds - (60*60*1000) * hours\nlet minutes = Math.floor(miliseconds/(60*1000))\nmiliseconds = miliseconds - (60*1000) * minutes\nlet seconds = Math.floor(miliseconds/(1000))\nmsg.payload.duration=`${days===0 ? \"\": days+ \" day\"+ (days===1 ? \" \":\"s \")}${days===0 && hours===0 ? \"\": hours+ \" hour\"+ (hours===1 ? \" \":\"s \")}${days===0 && hours===0 && minutes===0 ? \"\": minutes+ \" minute\"+ (minutes===1 ? \" \":\"s \")}${seconds} seconds`\nreturn msg",
+        "func": "let miliseconds = new Date().getTime()-Date.parse(msg.payload.startsAt)\nlet days = Math.floor(miliseconds/(24*60*60*1000))\nmiliseconds = miliseconds - (24*60*60*1000) * days\nlet hours = Math.floor(miliseconds/(60*60*1000))\nmiliseconds = miliseconds - (60*60*1000) * hours\nlet minutes = Math.floor(miliseconds/(60*1000))\nmiliseconds = miliseconds - (60*1000) * minutes\nlet seconds = Math.floor(miliseconds/(1000))\nmsg.payload.duration=`${days===0 ? \"\": days+ \" day\"+ (days===1 ? \" \":\"s \")}${days===0 && hours===0 ? \"\": hours+ \" hour\"+ (hours===1 ? \" \":\"s \")}${days===0 && hours===0 && minutes===0 ? \"\": minutes+ \" minute\"+ (minutes===1 ? \" \":\"s \")}${seconds} seconds`\nif (msg.payload.generatorURL==='' || msg.payload.generatorURL===undefined){\n    msg.payload.generatorURL=\"http://alertmanager.ds80.r60.info\";\n}\nreturn msg",
         "outputs": 1,
         "noerr": 0,
         "x": 1260,
