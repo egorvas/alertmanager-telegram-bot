@@ -1,0 +1,15 @@
+{
+  "name": "red",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node node_modules/node-red/red.js -u /data"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-red": "^1.0.6",
+    "node-red-contrib-chatbot": "^0.19.0"
+  }
+}

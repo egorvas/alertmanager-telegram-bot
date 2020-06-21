@@ -1,0 +1,2229 @@
+[
+    {
+        "id": "2feab401.8786cc",
+        "type": "tab",
+        "label": "alert-system",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "df38975b.361008",
+        "type": "chatbot-telegram-node",
+        "z": "",
+        "botname": "AlertmanagerTest",
+        "usernames": "",
+        "providerToken": "",
+        "polling": "1000",
+        "store": "",
+        "log": "",
+        "debug": false,
+        "webHook": "",
+        "connectMode": "polling"
+    },
+    {
+        "id": "d45d71eb.8ac9a",
+        "type": "chatbot-telegram-node",
+        "z": "",
+        "botname": "Alertmanager",
+        "usernames": "",
+        "providerToken": "",
+        "polling": "1000",
+        "store": "",
+        "log": "",
+        "debug": false,
+        "webHook": "",
+        "connectMode": "polling"
+    },
+    {
+        "id": "98d54438.520fb8",
+        "type": "http in",
+        "z": "2feab401.8786cc",
+        "name": "webhook",
+        "url": "webhook",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 100,
+        "y": 700,
+        "wires": [
+            [
+                "8d99399c.84b548",
+                "efb75b88.c178d8"
+            ]
+        ]
+    },
+    {
+        "id": "8d99399c.84b548",
+        "type": "http response",
+        "z": "2feab401.8786cc",
+        "name": "response",
+        "statusCode": "200",
+        "headers": {},
+        "x": 280,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "2fb60e76.c53ca2",
+        "type": "chatbot-conversation",
+        "z": "2feab401.8786cc",
+        "name": "conv",
+        "botDevelopment": "df38975b.361008",
+        "botProduction": "d45d71eb.8ac9a",
+        "chatId": "",
+        "userId": "",
+        "transport": "telegram",
+        "store": "",
+        "x": 970,
+        "y": 700,
+        "wires": [
+            [
+                "761c3e58.4f182"
+            ]
+        ]
+    },
+    {
+        "id": "84d5044e.6ff068",
+        "type": "switch",
+        "z": "2feab401.8786cc",
+        "name": "check is alert resolved",
+        "property": "payload.status",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "resolved",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 1440,
+        "y": 700,
+        "wires": [
+            [
+                "d92b8ee4.b877"
+            ],
+            [
+                "7e32ab6.930e554"
+            ]
+        ]
+    },
+    {
+        "id": "d92b8ee4.b877",
+        "type": "chatbot-message",
+        "z": "2feab401.8786cc",
+        "name": "resolved alert",
+        "message": [
+            {
+                "message": "<b>Resolved</b>☘️{{payload.labels.alertname}}\n{{payload.annotations.description}}\n<b>Count: </b>{{payload.annotations.count}}\n<b>Duration: </b>{{payload.duration}}"
+            }
+        ],
+        "language": "none",
+        "x": 1660,
+        "y": 640,
+        "wires": [
+            [
+                "f7b43d11.1aeca"
+            ]
+        ]
+    },
+    {
+        "id": "761c3e58.4f182",
+        "type": "split",
+        "z": "2feab401.8786cc",
+        "name": "split alerts",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "x": 1110,
+        "y": 700,
+        "wires": [
+            [
+                "eea4a91f.123f38"
+            ]
+        ]
+    },
+    {
+        "id": "c90226cc.a281c8",
+        "type": "change",
+        "z": "2feab401.8786cc",
+        "name": "pre split chats",
+        "rules": [
+            {
+                "t": "set",
+                "p": "alerts",
+                "pt": "msg",
+                "to": "payload.alerts",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "chats",
+                "tot": "global"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 480,
+        "y": 700,
+        "wires": [
+            [
+                "292158dd.0d9c48"
+            ]
+        ]
+    },
+    {
+        "id": "7e721183.5a3b3",
+        "type": "switch",
+        "z": "2feab401.8786cc",
+        "name": "main switch",
+        "property": "payload.content",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "/stop",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "/chats",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "/alerts",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "/silences",
+                "vt": "str"
+            },
+            {
+                "t": "cont",
+                "v": "create_silence",
+                "vt": "str"
+            },
+            {
+                "t": "cont",
+                "v": "expire_silence",
+                "vt": "str"
+            },
+            {
+                "t": "cont",
+                "v": "unmute",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "/help",
+                "vt": "str"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 8,
+        "x": 1010,
+        "y": 260,
+        "wires": [
+            [
+                "14ae312d.96622f"
+            ],
+            [
+                "bc5f3890.aa03c8"
+            ],
+            [
+                "564583c3.1598cc"
+            ],
+            [
+                "1741b477.e2d9dc"
+            ],
+            [
+                "f68731a2.de456"
+            ],
+            [
+                "b7ff072.a1e35f8"
+            ],
+            [
+                "578aeda8.baf644"
+            ],
+            [
+                "b0b94e22.c8bbf"
+            ]
+        ]
+    },
+    {
+        "id": "564583c3.1598cc",
+        "type": "http request",
+        "z": "2feab401.8786cc",
+        "name": "get alerts",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": false,
+        "url": "{{{alertmanagerUrl}}}/api/v2/alerts?silenced=false&inhibited=false&active=true",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 1337.9999561309814,
+        "y": 247,
+        "wires": [
+            [
+                "63da5667.adf8f8"
+            ]
+        ]
+    },
+    {
+        "id": "63da5667.adf8f8",
+        "type": "switch",
+        "z": "2feab401.8786cc",
+        "name": "check is has alerts",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "empty"
+            },
+            {
+                "t": "nempty"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 1507.9999561309814,
+        "y": 247,
+        "wires": [
+            [
+                "ccec9243.3389b"
+            ],
+            [
+                "90833206.57ae6"
+            ]
+        ]
+    },
+    {
+        "id": "ccec9243.3389b",
+        "type": "chatbot-message",
+        "z": "2feab401.8786cc",
+        "name": "No alerts right now",
+        "message": [
+            {
+                "message": "No alerts right now! 🎉"
+            }
+        ],
+        "language": "none",
+        "x": 1727.9999561309814,
+        "y": 227,
+        "wires": [
+            [
+                "a2842c24.90f62"
+            ]
+        ]
+    },
+    {
+        "id": "84933057.c6b48",
+        "type": "inject",
+        "z": "2feab401.8786cc",
+        "name": "allowedUsers",
+        "topic": "",
+        "payload": "TELEGRAM_ADMIN",
+        "payloadType": "env",
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "x": 140,
+        "y": 1680,
+        "wires": [
+            [
+                "848c27af.ae41f8"
+            ]
+        ]
+    },
+    {
+        "id": "6239ba55.2a3ef4",
+        "type": "switch",
+        "z": "2feab401.8786cc",
+        "name": "check is command /start",
+        "property": "payload.content",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "/start",
+                "vt": "str"
+            },
+            {
+                "t": "neq",
+                "v": "/start",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1047.9999561309814,
+        "y": 567,
+        "wires": [
+            [
+                "644323cc.184f8c"
+            ],
+            [
+                "e0c2420c.f0b44"
+            ]
+        ]
+    },
+    {
+        "id": "e0c2420c.f0b44",
+        "type": "chatbot-message",
+        "z": "2feab401.8786cc",
+        "name": "You should /start",
+        "message": [
+            {
+                "message": "{{firstName}}, you should /start for using this bot."
+            }
+        ],
+        "language": "none",
+        "x": 1667.9999561309814,
+        "y": 572.0000009536743,
+        "wires": [
+            [
+                "a2842c24.90f62"
+            ]
+        ]
+    },
+    {
+        "id": "14ae312d.96622f",
+        "type": "function",
+        "z": "2feab401.8786cc",
+        "name": "remove chatId from global chats",
+        "func": "let chats = global.get(\"chats\")\nlet index = chats.indexOf(msg.payload.chatId);\nwhile (index !== -1){\n    chats.splice(index, 1);\n    index = chats.indexOf(msg.payload.chatId);\n}\nmsg.payload=chats;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1310,
+        "y": 140,
+        "wires": [
+            [
+                "526a1cc.a418fe4"
+            ]
+        ]
+    },
+    {
+        "id": "bc5f3890.aa03c8",
+        "type": "chatbot-message",
+        "z": "2feab401.8786cc",
+        "name": "List of chats",
+        "message": [
+            {
+                "message": "{{global.chats}}"
+            }
+        ],
+        "language": "none",
+        "x": 1610,
+        "y": 180,
+        "wires": [
+            [
+                "a2842c24.90f62"
+            ]
+        ]
+    },
+    {
+        "id": "63d0b996.dff838",
+        "type": "switch",
+        "z": "2feab401.8786cc",
+        "name": "check is chat in global chats",
+        "property": "chats",
+        "propertyType": "global",
+        "rules": [
+            {
+                "t": "cont",
+                "v": "payload.chatId",
+                "vt": "msg"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 777.9999561309814,
+        "y": 267,
+        "wires": [
+            [
+                "7e721183.5a3b3"
+            ],
+            [
+                "6239ba55.2a3ef4"
+            ]
+        ]
+    },
+    {
+        "id": "f1a7da5c.5ec128",
+        "type": "switch",
+        "z": "2feab401.8786cc",
+        "name": "check is user allowed",
+        "property": "allowedUsers",
+        "propertyType": "global",
+        "rules": [
+            {
+                "t": "cont",
+                "v": "payload.userId",
+                "vt": "msg"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 520,
+        "y": 280,
+        "wires": [
+            [
+                "63d0b996.dff838"
+            ],
+            [
+                "15d6290d.5bfd77"
+            ]
+        ]
+    },
+    {
+        "id": "90833206.57ae6",
+        "type": "link out",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "links": [
+            "c835342b.330108",
+            "389bd48e.40459c"
+        ],
+        "x": 1752.9999561309814,
+        "y": 287,
+        "wires": []
+    },
+    {
+        "id": "eea4a91f.123f38",
+        "type": "function",
+        "z": "2feab401.8786cc",
+        "name": "duration",
+        "func": "let miliseconds = new Date().getTime()-Date.parse(msg.payload.startsAt)\nlet days = Math.floor(miliseconds/(24*60*60*1000))\nmiliseconds = miliseconds - (24*60*60*1000) * days\nlet hours = Math.floor(miliseconds/(60*60*1000))\nmiliseconds = miliseconds - (60*60*1000) * hours\nlet minutes = Math.floor(miliseconds/(60*1000))\nmiliseconds = miliseconds - (60*1000) * minutes\nlet seconds = Math.floor(miliseconds/(1000))\nmsg.payload.duration=`${days===0 ? \"\": days+ \" day\"+ (days===1 ? \" \":\"s \")}${days===0 && hours===0 ? \"\": hours+ \" hour\"+ (hours===1 ? \" \":\"s \")}${days===0 && hours===0 && minutes===0 ? \"\": minutes+ \" minute\"+ (minutes===1 ? \" \":\"s \")}${seconds} seconds`\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1260,
+        "y": 700,
+        "wires": [
+            [
+                "84d5044e.6ff068"
+            ]
+        ]
+    },
+    {
+        "id": "389bd48e.40459c",
+        "type": "link in",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "links": [
+            "90833206.57ae6"
+        ],
+        "x": 1015,
+        "y": 760,
+        "wires": [
+            [
+                "761c3e58.4f182"
+            ]
+        ]
+    },
+    {
+        "id": "23b0da9.05fb426",
+        "type": "http request",
+        "z": "2feab401.8786cc",
+        "name": "get silences",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": false,
+        "url": "{{{alertmanagerUrl}}}/api/v2/silences",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 550,
+        "y": 900,
+        "wires": [
+            [
+                "32d0f8dc.792388"
+            ]
+        ]
+    },
+    {
+        "id": "a370d333.fcbdb",
+        "type": "chatbot-message",
+        "z": "2feab401.8786cc",
+        "name": "No silences right now",
+        "message": [
+            {
+                "message": "No silences right now"
+            }
+        ],
+        "language": "none",
+        "x": 1731,
+        "y": 898.9999923706055,
+        "wires": [
+            [
+                "9ada950.6dbe468"
+            ]
+        ]
+    },
+    {
+        "id": "79bc1db2.756b24",
+        "type": "switch",
+        "z": "2feab401.8786cc",
+        "name": "check is silences exists",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nempty"
+            },
+            {
+                "t": "empty"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 950,
+        "y": 900,
+        "wires": [
+            [
+                "c264da31.8e8eb8"
+            ],
+            [
+                "a370d333.fcbdb"
+            ]
+        ]
+    },
+    {
+        "id": "c264da31.8e8eb8",
+        "type": "split",
+        "z": "2feab401.8786cc",
+        "name": "split silences",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "x": 1170,
+        "y": 800,
+        "wires": [
+            [
+                "8dbf7c6d.420ce"
+            ]
+        ]
+    },
+    {
+        "id": "8dbf7c6d.420ce",
+        "type": "function",
+        "z": "2feab401.8786cc",
+        "name": "duration",
+        "func": "let miliseconds = new Date().getTime()-Date.parse(msg.payload.startsAt)\nif (miliseconds<=1000){\n    msg.payload.duration=\"now\"\n}else{\n    let days = Math.floor(miliseconds/(24*60*60*1000))\n    miliseconds = miliseconds - (24*60*60*1000) * days\n    let hours = Math.floor(miliseconds/(60*60*1000))\n    miliseconds = miliseconds - (60*60*1000) * hours\n    let minutes = Math.floor(miliseconds/(60*1000))\n    miliseconds = miliseconds - (60*1000) * minutes\n    let seconds = Math.floor(miliseconds/(1000))\n    msg.payload.duration=`${days===0 ? \"\": days+ \" day\"+ (days===1 ? \" \":\"s \")}${days===0 && hours===0 ? \"\": hours+ \" hour\"+ (hours===1 ? \" \":\"s \")}${days===0 && hours===0 && minutes===0 ? \"\": minutes+ \" minute\"+ (minutes===1 ? \" \":\"s \")}${seconds} seconds ago`    \n}\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1340,
+        "y": 800,
+        "wires": [
+            [
+                "db48d529.4b6098"
+            ]
+        ]
+    },
+    {
+        "id": "db48d529.4b6098",
+        "type": "function",
+        "z": "2feab401.8786cc",
+        "name": "left",
+        "func": "let miliseconds = Date.parse(msg.payload.endsAt)-new Date().getTime()\nlet days = Math.floor(miliseconds/(24*60*60*1000))\nmiliseconds = miliseconds - (24*60*60*1000) * days\nlet hours = Math.floor(miliseconds/(60*60*1000))\nmiliseconds = miliseconds - (60*60*1000) * hours\nlet minutes = Math.floor(miliseconds/(60*1000))\nmiliseconds = miliseconds - (60*1000) * minutes\nlet seconds = Math.floor(miliseconds/(1000))\nmsg.payload.left=`${days===0 ? \"\": days+ \" day\"+ (days===1 ? \" \":\"s \")}${days===0 && hours===0 ? \"\": hours+ \" hour\"+ (hours===1 ? \" \":\"s \")}${days===0 && hours===0 && minutes===0 ? \"\": minutes+ \" minute\"+ (minutes===1 ? \" \":\"s \")}${seconds} seconds`\nmsg.silence= {id:msg.payload.id};\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1470,
+        "y": 800,
+        "wires": [
+            [
+                "5a0b281a.9f48f8"
+            ]
+        ]
+    },
+    {
+        "id": "5a0b281a.9f48f8",
+        "type": "chatbot-inline-buttons",
+        "z": "2feab401.8786cc",
+        "name": "show silence",
+        "buttons": [
+            {
+                "type": "postback",
+                "label": "🗑 Expire",
+                "value": "%expire_silence%{{payload.id}}%",
+                "answer": "",
+                "alert": false,
+                "style": ""
+            }
+        ],
+        "message": "<b>Id: </b>{{payload.id}}\n<b>Alertname: </b>{{payload.matchers.0.value}}\n<b>Creator: </b>{{payload.createdBy}}\n<b>Created: </b>{{payload.duration}}\n<b>Finish over: </b>{{payload.left}}",
+        "x": 1630,
+        "y": 800,
+        "wires": [
+            [
+                "395d2579.c15d8a"
+            ]
+        ]
+    },
+    {
+        "id": "66e987cf.ed8b08",
+        "type": "http request",
+        "z": "2feab401.8786cc",
+        "name": "get silences",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": false,
+        "url": "{{{alertmanagerUrl}}}/api/v2/silences?active=true&filter={alertname=\"{{silence.alertName}}\"}",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 350,
+        "y": 1020,
+        "wires": [
+            [
+                "3bd5bc0e.f0aa14"
+            ]
+        ]
+    },
+    {
+        "id": "7a29be8e.1bf4a",
+        "type": "function",
+        "z": "2feab401.8786cc",
+        "name": "get alertname",
+        "func": "msg.silence={}\nmsg.silence.alertName=msg.payload.content.split(\"%\")[3];\nlet hms = msg.payload.content.split(\"%\")[2]\nlet seconds = 0;\nlet hmsSplit;\nif (hms.includes('h')){\n    hmsSplit = hms.split('h');\n    seconds += +hmsSplit[0] * 3600;\n    hms = hmsSplit[1];\n}\nif (hms.includes('m')){\n    hmsSplit = hms.split('m');\n    seconds += +hmsSplit[0] * 60;\n    hms = hmsSplit[1];\n}\nif (hms.includes('s')){\n    hmsSplit = hms.split('s');\n    seconds += +hmsSplit[0];\n}\nif (msg.originalMessage.from.username===undefined){\n    msg.silence.creator=msg.originalMessage.from.first_name\n    if (msg.originalMessage.from.last_name!==undefined) msg.silence.creator+=\" \"+msg.originalMessage.from.last_name\n}else{\n    msg.silence.creator=\"@\"+msg.originalMessage.from.username\n}\nmsg.silence.start=new Date();\nmsg.silence.end=new Date(new Date().getTime()+seconds*1000);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 180,
+        "y": 1020,
+        "wires": [
+            [
+                "66e987cf.ed8b08"
+            ]
+        ]
+    },
+    {
+        "id": "5dc4fa82.abd674",
+        "type": "link in",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "links": [
+            "f68731a2.de456"
+        ],
+        "x": 55,
+        "y": 1020,
+        "wires": [
+            [
+                "7a29be8e.1bf4a"
+            ]
+        ]
+    },
+    {
+        "id": "f68731a2.de456",
+        "type": "link out",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "links": [
+            "5dc4fa82.abd674"
+        ],
+        "x": 1572.9999561309814,
+        "y": 367,
+        "wires": []
+    },
+    {
+        "id": "802a7c57.539b5",
+        "type": "switch",
+        "z": "2feab401.8786cc",
+        "name": "check is active silences exists",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "empty"
+            },
+            {
+                "t": "nempty"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 730,
+        "y": 1020,
+        "wires": [
+            [
+                "e136551.6ab2ca8"
+            ],
+            [
+                "f7391d03.319de"
+            ]
+        ]
+    },
+    {
+        "id": "f7391d03.319de",
+        "type": "chatbot-message",
+        "z": "2feab401.8786cc",
+        "name": "Alert already muted",
+        "message": [
+            {
+                "message": "Alert already muted"
+            }
+        ],
+        "language": "none",
+        "x": 1447,
+        "y": 1026.0000381469727,
+        "wires": [
+            [
+                "a1569bd9.e238e8"
+            ]
+        ]
+    },
+    {
+        "id": "5116484c.b90f08",
+        "type": "http request",
+        "z": "2feab401.8786cc",
+        "name": "create silence request",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": false,
+        "url": "{{{alertmanagerUrl}}}/api/v2/silences",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 1260,
+        "y": 980,
+        "wires": [
+            [
+                "87ce403.eacbcc"
+            ]
+        ]
+    },
+    {
+        "id": "e136551.6ab2ca8",
+        "type": "function",
+        "z": "2feab401.8786cc",
+        "name": "create body for request",
+        "func": "msg.payload={\n    id: null,\n    createdBy: msg.silence.creator,\n    startsAt: msg.silence.start,\n    endsAt: msg.silence.end,\n    comment: \"\",\n    matchers: [{name: \"alertname\", isRegex: false, value:msg.silence.alertName}]\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1030,
+        "y": 980,
+        "wires": [
+            [
+                "5116484c.b90f08"
+            ]
+        ]
+    },
+    {
+        "id": "32d0f8dc.792388",
+        "type": "function",
+        "z": "2feab401.8786cc",
+        "name": "filter active silences",
+        "func": "msg.payload=msg.payload.filter(silence => silence.status.state === \"active\");\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 730,
+        "y": 900,
+        "wires": [
+            [
+                "79bc1db2.756b24"
+            ]
+        ]
+    },
+    {
+        "id": "3bd5bc0e.f0aa14",
+        "type": "function",
+        "z": "2feab401.8786cc",
+        "name": "filter active",
+        "func": "msg.payload=msg.payload.filter(silence => silence.status.state === \"active\");\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 510,
+        "y": 1020,
+        "wires": [
+            [
+                "802a7c57.539b5"
+            ]
+        ]
+    },
+    {
+        "id": "87ce403.eacbcc",
+        "type": "http request",
+        "z": "2feab401.8786cc",
+        "name": "get created silence",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": false,
+        "url": "{{{alertmanagerUrl}}}/api/v2/silence/{{payload.silenceID}}",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 1470,
+        "y": 980,
+        "wires": [
+            [
+                "6a5ac4a9.9d3adc"
+            ]
+        ]
+    },
+    {
+        "id": "b7ff072.a1e35f8",
+        "type": "link out",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "links": [
+            "50f820d.14206e",
+            "33b5fc62.d73874",
+            "9e3be4ac.65d138"
+        ],
+        "x": 1572.9999561309814,
+        "y": 407,
+        "wires": []
+    },
+    {
+        "id": "50f820d.14206e",
+        "type": "link in",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "links": [
+            "b7ff072.a1e35f8"
+        ],
+        "x": 55,
+        "y": 1100,
+        "wires": [
+            [
+                "3e997262.9374ce"
+            ]
+        ]
+    },
+    {
+        "id": "3e997262.9374ce",
+        "type": "function",
+        "z": "2feab401.8786cc",
+        "name": "get silence id",
+        "func": "msg.payload.id=msg.payload.content.split(\"%\")[2];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 910,
+        "y": 1100,
+        "wires": [
+            [
+                "86f5b97b.3fb3e8",
+                "988cd378.b0772"
+            ]
+        ]
+    },
+    {
+        "id": "86f5b97b.3fb3e8",
+        "type": "http request",
+        "z": "2feab401.8786cc",
+        "name": "request to delete silence",
+        "method": "DELETE",
+        "ret": "txt",
+        "paytoqs": false,
+        "url": "{{{alertmanagerUrl}}}/api/v2/silence/{{payload.id}}",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 1250,
+        "y": 1100,
+        "wires": [
+            [
+                "ce9930ee.1cb69"
+            ]
+        ]
+    },
+    {
+        "id": "ce9930ee.1cb69",
+        "type": "switch",
+        "z": "2feab401.8786cc",
+        "name": "check is silence deleted",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nempty"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 1,
+        "x": 1490,
+        "y": 1100,
+        "wires": [
+            [
+                "4d1adc0b.9fc854"
+            ]
+        ]
+    },
+    {
+        "id": "4d1adc0b.9fc854",
+        "type": "chatbot-message",
+        "z": "2feab401.8786cc",
+        "name": "Alert already unmuted",
+        "message": [
+            {
+                "message": "Alert already unmuted"
+            }
+        ],
+        "language": "none",
+        "x": 1720,
+        "y": 1100,
+        "wires": [
+            [
+                "a1569bd9.e238e8"
+            ]
+        ]
+    },
+    {
+        "id": "578aeda8.baf644",
+        "type": "link out",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "links": [
+            "dd1eef8f.4087f",
+            "e2d7d754.9a7068"
+        ],
+        "x": 1572.9999561309814,
+        "y": 447,
+        "wires": []
+    },
+    {
+        "id": "dd1eef8f.4087f",
+        "type": "link in",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "links": [
+            "578aeda8.baf644"
+        ],
+        "x": 55,
+        "y": 1220,
+        "wires": [
+            [
+                "b1d8d14.f454e3"
+            ]
+        ]
+    },
+    {
+        "id": "64fb1fdd.79b5e",
+        "type": "http request",
+        "z": "2feab401.8786cc",
+        "name": "get silences",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": false,
+        "url": "{{{alertmanagerUrl}}}/api/v2/silences?active=true&filter={alertname=\"{{payload.alertName}}\"}",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 350,
+        "y": 1220,
+        "wires": [
+            [
+                "e6196ac0.137298"
+            ]
+        ]
+    },
+    {
+        "id": "e6196ac0.137298",
+        "type": "function",
+        "z": "2feab401.8786cc",
+        "name": "filter active",
+        "func": "msg.payload=msg.payload.filter(silence => silence.status.state === \"active\");\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 510,
+        "y": 1220,
+        "wires": [
+            [
+                "a4959493.7d75d8"
+            ]
+        ]
+    },
+    {
+        "id": "b1d8d14.f454e3",
+        "type": "function",
+        "z": "2feab401.8786cc",
+        "name": "get alertname",
+        "func": "msg.payload.alertName=msg.payload.content.split(\"%\")[2];\nmsg.command=msg.payload.content.split(\"%\")[1];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 180,
+        "y": 1220,
+        "wires": [
+            [
+                "64fb1fdd.79b5e"
+            ]
+        ]
+    },
+    {
+        "id": "a4959493.7d75d8",
+        "type": "switch",
+        "z": "2feab401.8786cc",
+        "name": "check is active silences exists",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nempty"
+            },
+            {
+                "t": "empty"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 730,
+        "y": 1220,
+        "wires": [
+            [
+                "540985b2.628f0c"
+            ],
+            [
+                "28471b10.7663a4"
+            ]
+        ]
+    },
+    {
+        "id": "28471b10.7663a4",
+        "type": "chatbot-message",
+        "z": "2feab401.8786cc",
+        "name": "Alert isn't muted",
+        "message": [
+            {
+                "message": "Alert isn't muted"
+            }
+        ],
+        "language": "none",
+        "x": 1464,
+        "y": 1227.000002861023,
+        "wires": [
+            [
+                "a1569bd9.e238e8"
+            ]
+        ]
+    },
+    {
+        "id": "540985b2.628f0c",
+        "type": "split",
+        "z": "2feab401.8786cc",
+        "name": "split silences",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "x": 990,
+        "y": 1180,
+        "wires": [
+            [
+                "86f5b97b.3fb3e8",
+                "988cd378.b0772"
+            ]
+        ]
+    },
+    {
+        "id": "78352a09.7edfd4",
+        "type": "link in",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "links": [
+            "1741b477.e2d9dc"
+        ],
+        "x": 415,
+        "y": 900,
+        "wires": [
+            [
+                "23b0da9.05fb426"
+            ]
+        ]
+    },
+    {
+        "id": "1741b477.e2d9dc",
+        "type": "link out",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "links": [
+            "78352a09.7edfd4"
+        ],
+        "x": 1572.9999561309814,
+        "y": 327,
+        "wires": []
+    },
+    {
+        "id": "5c5c2866.f4a718",
+        "type": "link in",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "links": [
+            "a1569bd9.e238e8",
+            "9ada950.6dbe468",
+            "a2842c24.90f62",
+            "f412657.3327a98",
+            "9ed39120.79f03"
+        ],
+        "x": 1695,
+        "y": 980,
+        "wires": [
+            [
+                "11cb52b6.9c0b1d"
+            ]
+        ]
+    },
+    {
+        "id": "11cb52b6.9c0b1d",
+        "type": "chatbot-telegram-send",
+        "z": "2feab401.8786cc",
+        "bot": "df38975b.361008",
+        "botProduction": "d45d71eb.8ac9a",
+        "track": false,
+        "passThrough": false,
+        "outputs": 0,
+        "x": 1850,
+        "y": 980,
+        "wires": []
+    },
+    {
+        "id": "a1569bd9.e238e8",
+        "type": "link out",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "links": [
+            "5c5c2866.f4a718",
+            "b919b3a8.afe93",
+            "64d2f4c6.83bb5c"
+        ],
+        "x": 1955,
+        "y": 1100,
+        "wires": []
+    },
+    {
+        "id": "a2842c24.90f62",
+        "type": "link out",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "links": [
+            "5c5c2866.f4a718",
+            "b919b3a8.afe93",
+            "64d2f4c6.83bb5c"
+        ],
+        "x": 1935,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "23790642.33e7ea",
+        "type": "inject",
+        "z": "2feab401.8786cc",
+        "name": "resetChats",
+        "topic": "",
+        "payload": "[]",
+        "payloadType": "json",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 120,
+        "y": 1600,
+        "wires": [
+            [
+                "9520fb9.29fdc08"
+            ]
+        ]
+    },
+    {
+        "id": "644323cc.184f8c",
+        "type": "function",
+        "z": "2feab401.8786cc",
+        "name": "save chatId to global chats",
+        "func": "let chats = global.get(\"chats\");\nif (!chats.includes(msg.payload.chatId)){\n    chats.push(msg.payload.chatId);\n}\nmsg.payload=chats;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1297.9999561309814,
+        "y": 507,
+        "wires": [
+            [
+                "b0b94e22.c8bbf",
+                "ba7b7dd3.86549"
+            ]
+        ]
+    },
+    {
+        "id": "292158dd.0d9c48",
+        "type": "split",
+        "z": "2feab401.8786cc",
+        "name": "split chats",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "x": 650,
+        "y": 700,
+        "wires": [
+            [
+                "561c0a37.a69324"
+            ]
+        ]
+    },
+    {
+        "id": "561c0a37.a69324",
+        "type": "change",
+        "z": "2feab401.8786cc",
+        "name": "after split chats",
+        "rules": [
+            {
+                "t": "set",
+                "p": "chatId",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "alerts",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 820,
+        "y": 700,
+        "wires": [
+            [
+                "2fb60e76.c53ca2"
+            ]
+        ]
+    },
+    {
+        "id": "f7b43d11.1aeca",
+        "type": "chatbot-params",
+        "z": "2feab401.8786cc",
+        "name": "html",
+        "params": [
+            {
+                "platform": "telegram",
+                "name": "parseMode",
+                "value": "HTML"
+            }
+        ],
+        "outputs": 1,
+        "x": 1850,
+        "y": 700,
+        "wires": [
+            [
+                "9ada950.6dbe468"
+            ]
+        ]
+    },
+    {
+        "id": "a4a1540a.6dc628",
+        "type": "chatbot-telegram-receive",
+        "z": "2feab401.8786cc",
+        "bot": "df38975b.361008",
+        "botProduction": "d45d71eb.8ac9a",
+        "x": 90,
+        "y": 280,
+        "wires": [
+            [
+                "13ec567f.ce355a"
+            ]
+        ]
+    },
+    {
+        "id": "848c27af.ae41f8",
+        "type": "change",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "allowedUsers",
+                "pt": "global",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 350,
+        "y": 1680,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ac061718.aae2f8",
+        "type": "inject",
+        "z": "2feab401.8786cc",
+        "name": "chats",
+        "topic": "",
+        "payload": "",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "x": 110,
+        "y": 1760,
+        "wires": [
+            [
+                "d5e203fa.fa6c4"
+            ]
+        ]
+    },
+    {
+        "id": "d5e203fa.fa6c4",
+        "type": "file",
+        "z": "2feab401.8786cc",
+        "name": "create chats file if not exists",
+        "filename": "storage/chats",
+        "appendNewline": false,
+        "createDir": true,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 300,
+        "y": 1760,
+        "wires": [
+            [
+                "3d5b328a.40da1e"
+            ]
+        ]
+    },
+    {
+        "id": "3d5b328a.40da1e",
+        "type": "file in",
+        "z": "2feab401.8786cc",
+        "name": "get chats",
+        "filename": "storage/chats",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "x": 500,
+        "y": 1760,
+        "wires": [
+            [
+                "bc4abb20.9ea128"
+            ]
+        ]
+    },
+    {
+        "id": "b0b94e22.c8bbf",
+        "type": "chatbot-message",
+        "z": "2feab401.8786cc",
+        "name": "Show /help",
+        "message": [
+            {
+                "message": "I'm a Telegram Bot for Alert-system. I will notify you about alerts.\nYou can also ask me about my /alerts & /silences\n\nAvailable commands:\n/start - Subscribe for alerts.\n/stop - Unsubscribe for alerts.\n/alerts - List all alerts.\n/silences - List all silences.\n/chats - List all users and group chats that subscribed.\n/help - Show this message"
+            }
+        ],
+        "language": "none",
+        "x": 1647.9999561309814,
+        "y": 507,
+        "wires": [
+            [
+                "a2842c24.90f62"
+            ]
+        ]
+    },
+    {
+        "id": "bc4abb20.9ea128",
+        "type": "switch",
+        "z": "2feab401.8786cc",
+        "name": "check is chats empty",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 680,
+        "y": 1760,
+        "wires": [
+            [
+                "24117e52.a10882"
+            ],
+            [
+                "9cdbe836.47f848"
+            ]
+        ]
+    },
+    {
+        "id": "24117e52.a10882",
+        "type": "change",
+        "z": "2feab401.8786cc",
+        "name": "[]",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "[]",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 890,
+        "y": 1660,
+        "wires": [
+            [
+                "9520fb9.29fdc08",
+                "9cde96e9.32c8f8"
+            ]
+        ]
+    },
+    {
+        "id": "9520fb9.29fdc08",
+        "type": "file",
+        "z": "2feab401.8786cc",
+        "name": "saveChats",
+        "filename": "storage/chats",
+        "appendNewline": false,
+        "createDir": false,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 1170,
+        "y": 1600,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5a89339e.a6b46c",
+        "type": "link in",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "links": [
+            "ba7b7dd3.86549",
+            "526a1cc.a418fe4",
+            "333b2ac3.116bb6"
+        ],
+        "x": 1015,
+        "y": 1660,
+        "wires": [
+            [
+                "9520fb9.29fdc08",
+                "9cde96e9.32c8f8"
+            ]
+        ]
+    },
+    {
+        "id": "ba7b7dd3.86549",
+        "type": "link out",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "links": [
+            "5a89339e.a6b46c",
+            "3abdf12.b7dac0e"
+        ],
+        "x": 1452.9999561309814,
+        "y": 547,
+        "wires": []
+    },
+    {
+        "id": "526a1cc.a418fe4",
+        "type": "link out",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "links": [
+            "5a89339e.a6b46c",
+            "3abdf12.b7dac0e"
+        ],
+        "x": 1475,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "feddf700.0e6a68",
+        "type": "link in",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "links": [
+            "395d2579.c15d8a"
+        ],
+        "x": 55,
+        "y": 1500,
+        "wires": [
+            [
+                "37a02c11.bd22d4"
+            ]
+        ]
+    },
+    {
+        "id": "395d2579.c15d8a",
+        "type": "link out",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "links": [
+            "feddf700.0e6a68",
+            "10185f6.f96b0a1"
+        ],
+        "x": 1775,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "23b801c9.4da8ee",
+        "type": "function",
+        "z": "2feab401.8786cc",
+        "name": "set payload as array of message id",
+        "func": "if (msg.payload!==null){\n  msg.payload=msg.payload[msg.silence.id]  \n}else{\n msg.payload=[]   \n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 580,
+        "y": 1340,
+        "wires": [
+            [
+                "1afdbe64.3fcee2"
+            ]
+        ]
+    },
+    {
+        "id": "2d67f66f.d8574a",
+        "type": "chatbot-conversation",
+        "z": "2feab401.8786cc",
+        "name": "conv",
+        "botDevelopment": "df38975b.361008",
+        "botProduction": "d45d71eb.8ac9a",
+        "chatId": "",
+        "userId": "",
+        "transport": "telegram",
+        "store": "",
+        "x": 1190,
+        "y": 1340,
+        "wires": [
+            [
+                "59a5614d.9c32a"
+            ]
+        ]
+    },
+    {
+        "id": "9ed39120.79f03",
+        "type": "link out",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "links": [
+            "5c5c2866.f4a718",
+            "b919b3a8.afe93",
+            "64d2f4c6.83bb5c"
+        ],
+        "x": 1915,
+        "y": 1340,
+        "wires": []
+    },
+    {
+        "id": "8d2a5e7d.af973",
+        "type": "chatbot-inline-buttons",
+        "z": "2feab401.8786cc",
+        "name": "set empty buttons",
+        "buttons": [
+            {
+                "type": "newline"
+            }
+        ],
+        "message": "",
+        "x": 1570,
+        "y": 1340,
+        "wires": [
+            [
+                "72f5acc2.a5ded4"
+            ]
+        ]
+    },
+    {
+        "id": "72f5acc2.a5ded4",
+        "type": "chatbot-params",
+        "z": "2feab401.8786cc",
+        "name": "set new message id",
+        "params": [
+            {
+                "platform": "telegram",
+                "name": "modifyMessageId",
+                "value": "{{messageIdNew}}"
+            }
+        ],
+        "outputs": 1,
+        "x": 1780,
+        "y": 1340,
+        "wires": [
+            [
+                "9ed39120.79f03"
+            ]
+        ]
+    },
+    {
+        "id": "59a5614d.9c32a",
+        "type": "change",
+        "z": "2feab401.8786cc",
+        "name": "store messageIdNew",
+        "rules": [
+            {
+                "t": "set",
+                "p": "messageIdNew",
+                "pt": "msg",
+                "to": "payload.messageIdNew",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1360,
+        "y": 1340,
+        "wires": [
+            [
+                "8d2a5e7d.af973"
+            ]
+        ]
+    },
+    {
+        "id": "1afdbe64.3fcee2",
+        "type": "split",
+        "z": "2feab401.8786cc",
+        "name": "split message ids",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "x": 830,
+        "y": 1340,
+        "wires": [
+            [
+                "73786d8d.eb4024"
+            ]
+        ]
+    },
+    {
+        "id": "63b1a242.6f07dc",
+        "type": "chatbot-context",
+        "z": "2feab401.8786cc",
+        "command": "get",
+        "fieldValue": "",
+        "fieldType": "json",
+        "fieldName": "silences",
+        "x": 350,
+        "y": 1340,
+        "wires": [
+            [
+                "23b801c9.4da8ee",
+                "398e73a0.abee4c"
+            ]
+        ]
+    },
+    {
+        "id": "d666c95e.7f6cb8",
+        "type": "function",
+        "z": "2feab401.8786cc",
+        "name": "save silence id",
+        "func": "msg.silence={id:msg.payload.id}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 180,
+        "y": 1340,
+        "wires": [
+            [
+                "63b1a242.6f07dc"
+            ]
+        ]
+    },
+    {
+        "id": "73786d8d.eb4024",
+        "type": "function",
+        "z": "2feab401.8786cc",
+        "name": "pre conversation",
+        "func": "var chat = msg.chat();\nvar chatId = chat.get('chatId');\nmsg.payload = {    \n  chatId: chatId,    \n  messageIdNew: msg.payload\n};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1030,
+        "y": 1340,
+        "wires": [
+            [
+                "2d67f66f.d8574a"
+            ]
+        ]
+    },
+    {
+        "id": "ab82deaf.f5241",
+        "type": "link in",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "links": [
+            "988cd378.b0772",
+            "75099280.c17ddc"
+        ],
+        "x": 55,
+        "y": 1340,
+        "wires": [
+            [
+                "d666c95e.7f6cb8"
+            ]
+        ]
+    },
+    {
+        "id": "988cd378.b0772",
+        "type": "link out",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "links": [
+            "ab82deaf.f5241"
+        ],
+        "x": 1075,
+        "y": 1120,
+        "wires": []
+    },
+    {
+        "id": "a7568129.09d43",
+        "type": "chatbot-telegram-send",
+        "z": "2feab401.8786cc",
+        "bot": "df38975b.361008",
+        "botProduction": "d45d71eb.8ac9a",
+        "track": false,
+        "passThrough": true,
+        "outputs": 1,
+        "x": 310,
+        "y": 1500,
+        "wires": [
+            [
+                "cb930d61.880c8"
+            ]
+        ]
+    },
+    {
+        "id": "37a02c11.bd22d4",
+        "type": "chatbot-params",
+        "z": "2feab401.8786cc",
+        "name": "html",
+        "params": [
+            {
+                "platform": "telegram",
+                "name": "parseMode",
+                "value": "HTML"
+            }
+        ],
+        "outputs": 1,
+        "x": 150,
+        "y": 1500,
+        "wires": [
+            [
+                "a7568129.09d43"
+            ]
+        ]
+    },
+    {
+        "id": "403987a2.5e8c48",
+        "type": "chatbot-context",
+        "z": "2feab401.8786cc",
+        "command": "get",
+        "fieldValue": "",
+        "fieldType": "json",
+        "fieldName": "silences",
+        "x": 1167.999984741211,
+        "y": 1493.0003070831299,
+        "wires": [
+            [
+                "3b037899.face68"
+            ]
+        ]
+    },
+    {
+        "id": "3b037899.face68",
+        "type": "function",
+        "z": "2feab401.8786cc",
+        "name": "update silences context",
+        "func": "if (msg.payload.hasOwnProperty(msg.silence.id)){\n    msg.payload[msg.silence.id].push(msg.silence.message)\n}else{\n    msg.payload[msg.silence.id]=[msg.silence.message]\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1373,
+        "y": 1493.000470161438,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "cb930d61.880c8",
+        "type": "function",
+        "z": "2feab401.8786cc",
+        "name": "get message id",
+        "func": "var chat = msg.chat();\nvar messageId = chat.get('messageId');\nmsg.silence.message=messageId;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 500,
+        "y": 1500,
+        "wires": [
+            [
+                "282eebb2.559d74"
+            ]
+        ]
+    },
+    {
+        "id": "282eebb2.559d74",
+        "type": "chatbot-rules",
+        "z": "2feab401.8786cc",
+        "name": "check is silences context defined",
+        "rules": [
+            {
+                "type": "hasVariable",
+                "variable": "silences"
+            },
+            {
+                "type": "hasNotVariable",
+                "variable": "silences"
+            }
+        ],
+        "outputs": 2,
+        "x": 740,
+        "y": 1500,
+        "wires": [
+            [
+                "403987a2.5e8c48"
+            ],
+            [
+                "bbc062b1.402b"
+            ]
+        ]
+    },
+    {
+        "id": "bbc062b1.402b",
+        "type": "chatbot-context",
+        "z": "2feab401.8786cc",
+        "command": "set",
+        "fieldValue": "{}",
+        "fieldType": "json",
+        "fieldName": "silences",
+        "x": 970,
+        "y": 1540,
+        "wires": [
+            [
+                "403987a2.5e8c48"
+            ]
+        ]
+    },
+    {
+        "id": "15d6290d.5bfd77",
+        "type": "chatbot-log",
+        "z": "2feab401.8786cc",
+        "x": 687.9999561309814,
+        "y": 327,
+        "wires": [
+            [
+                "db0b232e.0e395"
+            ]
+        ]
+    },
+    {
+        "id": "9ada950.6dbe468",
+        "type": "link out",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "links": [
+            "5c5c2866.f4a718",
+            "b919b3a8.afe93",
+            "64d2f4c6.83bb5c"
+        ],
+        "x": 1955,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "3774b856.e6f798",
+        "type": "link in",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "links": [
+            "6a5ac4a9.9d3adc"
+        ],
+        "x": 1215,
+        "y": 860,
+        "wires": [
+            [
+                "8dbf7c6d.420ce"
+            ]
+        ]
+    },
+    {
+        "id": "6a5ac4a9.9d3adc",
+        "type": "link out",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "links": [
+            "3774b856.e6f798"
+        ],
+        "x": 1595,
+        "y": 980,
+        "wires": []
+    },
+    {
+        "id": "7e32ab6.930e554",
+        "type": "chatbot-inline-buttons",
+        "z": "2feab401.8786cc",
+        "name": "show alert",
+        "buttons": [
+            {
+                "type": "url",
+                "label": "📈 More Info",
+                "url": "{{payload.generatorURL}}",
+                "webViewHeightRatio": "tall",
+                "extensions": false,
+                "answer": "",
+                "alert": false
+            },
+            {
+                "type": "newline"
+            },
+            {
+                "type": "postback",
+                "label": "🔕 Mute for 1 hour",
+                "value": "%create_silence%1h%{{payload.labels.alertname}}%",
+                "answer": "",
+                "alert": false,
+                "style": ""
+            },
+            {
+                "type": "postback",
+                "label": "🔕 Mute for 1 day",
+                "value": "%create_silence%24h%{{payload.labels.alertname}}%",
+                "answer": "",
+                "alert": false,
+                "style": ""
+            },
+            {
+                "type": "postback",
+                "label": "🔔 Unmute",
+                "value": "%unmute%{{payload.labels.alertname}}%",
+                "answer": "",
+                "alert": false,
+                "style": ""
+            }
+        ],
+        "message": "<b>Fire</b>🔥{{payload.labels.alertname}}\n{{payload.annotations.description}}\n<b>Count: </b>{{payload.annotations.count}}\n<b>Duration: </b>{{payload.duration}}",
+        "x": 1670,
+        "y": 700,
+        "wires": [
+            [
+                "f7b43d11.1aeca"
+            ]
+        ]
+    },
+    {
+        "id": "739a33c6.5e512c",
+        "type": "function",
+        "z": "2feab401.8786cc",
+        "name": "delete key from silences",
+        "func": "if (msg.payload.hasOwnProperty(msg.silence.id)){\n    delete msg.payload[msg.silence.id]\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 950,
+        "y": 1400,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "398e73a0.abee4c",
+        "type": "chatbot-rules",
+        "z": "2feab401.8786cc",
+        "name": "check is silences defined",
+        "rules": [
+            {
+                "type": "hasVariable",
+                "variable": "silences"
+            }
+        ],
+        "outputs": 1,
+        "x": 550,
+        "y": 1400,
+        "wires": [
+            [
+                "fb55f762.87ce78"
+            ]
+        ]
+    },
+    {
+        "id": "fb55f762.87ce78",
+        "type": "chatbot-context",
+        "z": "2feab401.8786cc",
+        "command": "get",
+        "fieldValue": "",
+        "fieldType": "json",
+        "fieldName": "silences",
+        "x": 750,
+        "y": 1400,
+        "wires": [
+            [
+                "739a33c6.5e512c"
+            ]
+        ]
+    },
+    {
+        "id": "db0b232e.0e395",
+        "type": "file",
+        "z": "2feab401.8786cc",
+        "name": "save not-auth",
+        "filename": "storage/logs/not-auth.log",
+        "appendNewline": true,
+        "createDir": true,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 837.9999561309814,
+        "y": 327,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "efb75b88.c178d8",
+        "type": "change",
+        "z": "2feab401.8786cc",
+        "name": "set alertmanagerUrl",
+        "rules": [
+            {
+                "t": "set",
+                "p": "alertmanagerUrl",
+                "pt": "msg",
+                "to": "ALERTMANAGER_URL",
+                "tot": "env"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 290,
+        "y": 700,
+        "wires": [
+            [
+                "c90226cc.a281c8"
+            ]
+        ]
+    },
+    {
+        "id": "13ec567f.ce355a",
+        "type": "change",
+        "z": "2feab401.8786cc",
+        "name": "set alertmanagerUrl",
+        "rules": [
+            {
+                "t": "set",
+                "p": "alertmanagerUrl",
+                "pt": "msg",
+                "to": "ALERTMANAGER_URL",
+                "tot": "env"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 310,
+        "y": 280,
+        "wires": [
+            [
+                "f1a7da5c.5ec128"
+            ]
+        ]
+    },
+    {
+        "id": "9cde96e9.32c8f8",
+        "type": "change",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "chats",
+                "pt": "global",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1252.0001640319824,
+        "y": 1766.000418663025,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9cdbe836.47f848",
+        "type": "json",
+        "z": "2feab401.8786cc",
+        "name": "parse chats",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 976.0002136230469,
+        "y": 1767.000418663025,
+        "wires": [
+            [
+                "9cde96e9.32c8f8"
+            ]
+        ]
+    }
+]
