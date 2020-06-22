@@ -237,7 +237,7 @@
         "checkall": "false",
         "repair": false,
         "outputs": 8,
-        "x": 1010,
+        "x": 790,
         "y": 260,
         "wires": [
             [
@@ -279,8 +279,8 @@
         "persist": false,
         "proxy": "",
         "authType": "",
-        "x": 1337.9999561309814,
-        "y": 247,
+        "x": 1100,
+        "y": 240,
         "wires": [
             [
                 "63da5667.adf8f8"
@@ -305,8 +305,8 @@
         "checkall": "false",
         "repair": false,
         "outputs": 2,
-        "x": 1507.9999561309814,
-        "y": 247,
+        "x": 1270,
+        "y": 240,
         "wires": [
             [
                 "ccec9243.3389b"
@@ -327,31 +327,11 @@
             }
         ],
         "language": "none",
-        "x": 1727.9999561309814,
-        "y": 227,
+        "x": 1590,
+        "y": 240,
         "wires": [
             [
                 "a2842c24.90f62"
-            ]
-        ]
-    },
-    {
-        "id": "84933057.c6b48",
-        "type": "inject",
-        "z": "2feab401.8786cc",
-        "name": "allowedUsers",
-        "topic": "",
-        "payload": "TELEGRAM_ADMIN",
-        "payloadType": "env",
-        "repeat": "",
-        "crontab": "",
-        "once": true,
-        "onceDelay": 0.1,
-        "x": 140,
-        "y": 1680,
-        "wires": [
-            [
-                "848c27af.ae41f8"
             ]
         ]
     },
@@ -377,8 +357,8 @@
         "checkall": "true",
         "repair": false,
         "outputs": 2,
-        "x": 1047.9999561309814,
-        "y": 567,
+        "x": 990,
+        "y": 560,
         "wires": [
             [
                 "644323cc.184f8c"
@@ -415,8 +395,8 @@
         "func": "let chats = global.get(\"chats\")\nlet index = chats.indexOf(msg.payload.chatId);\nwhile (index !== -1){\n    chats.splice(index, 1);\n    index = chats.indexOf(msg.payload.chatId);\n}\nmsg.payload=chats;\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 1310,
-        "y": 140,
+        "x": 1050,
+        "y": 160,
         "wires": [
             [
                 "526a1cc.a418fe4"
@@ -434,8 +414,8 @@
             }
         ],
         "language": "none",
-        "x": 1610,
-        "y": 180,
+        "x": 1010,
+        "y": 200,
         "wires": [
             [
                 "a2842c24.90f62"
@@ -462,45 +442,14 @@
         "checkall": "false",
         "repair": false,
         "outputs": 2,
-        "x": 777.9999561309814,
-        "y": 267,
+        "x": 520,
+        "y": 280,
         "wires": [
             [
                 "7e721183.5a3b3"
             ],
             [
-                "6239ba55.2a3ef4"
-            ]
-        ]
-    },
-    {
-        "id": "f1a7da5c.5ec128",
-        "type": "switch",
-        "z": "2feab401.8786cc",
-        "name": "check is user allowed",
-        "property": "allowedUsers",
-        "propertyType": "global",
-        "rules": [
-            {
-                "t": "cont",
-                "v": "originalMessage.from.id",
-                "vt": "msg"
-            },
-            {
-                "t": "else"
-            }
-        ],
-        "checkall": "false",
-        "repair": false,
-        "outputs": 2,
-        "x": 520,
-        "y": 280,
-        "wires": [
-            [
-                "63d0b996.dff838"
-            ],
-            [
-                "15d6290d.5bfd77"
+                "98c899a2.a04778"
             ]
         ]
     },
@@ -513,8 +462,8 @@
             "c835342b.330108",
             "389bd48e.40459c"
         ],
-        "x": 1752.9999561309814,
-        "y": 287,
+        "x": 1435,
+        "y": 260,
         "wires": []
     },
     {
@@ -1241,8 +1190,8 @@
             "b919b3a8.afe93",
             "64d2f4c6.83bb5c"
         ],
-        "x": 1935,
-        "y": 220,
+        "x": 1835,
+        "y": 200,
         "wires": []
     },
     {
@@ -1273,8 +1222,8 @@
         "func": "let chats = global.get(\"chats\");\nif (!chats.includes(msg.payload.chatId)){\n    chats.push(msg.payload.chatId);\n}\nmsg.payload=chats;\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 1297.9999561309814,
-        "y": 507,
+        "x": 1260,
+        "y": 520,
         "wires": [
             [
                 "b0b94e22.c8bbf",
@@ -1371,31 +1320,6 @@
         ]
     },
     {
-        "id": "848c27af.ae41f8",
-        "type": "change",
-        "z": "2feab401.8786cc",
-        "name": "",
-        "rules": [
-            {
-                "t": "set",
-                "p": "allowedUsers",
-                "pt": "global",
-                "to": "payload",
-                "tot": "msg"
-            }
-        ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 350,
-        "y": 1680,
-        "wires": [
-            []
-        ]
-    },
-    {
         "id": "ac061718.aae2f8",
         "type": "inject",
         "z": "2feab401.8786cc",
@@ -1462,8 +1386,8 @@
             }
         ],
         "language": "none",
-        "x": 1647.9999561309814,
-        "y": 507,
+        "x": 1650,
+        "y": 520,
         "wires": [
             [
                 "a2842c24.90f62"
@@ -1573,8 +1497,8 @@
             "5a89339e.a6b46c",
             "3abdf12.b7dac0e"
         ],
-        "x": 1452.9999561309814,
-        "y": 547,
+        "x": 1455,
+        "y": 540,
         "wires": []
     },
     {
@@ -1586,8 +1510,8 @@
             "5a89339e.a6b46c",
             "3abdf12.b7dac0e"
         ],
-        "x": 1475,
-        "y": 140,
+        "x": 1215,
+        "y": 160,
         "wires": []
     },
     {
@@ -1963,8 +1887,8 @@
         "id": "15d6290d.5bfd77",
         "type": "chatbot-log",
         "z": "2feab401.8786cc",
-        "x": 687.9999561309814,
-        "y": 327,
+        "x": 910,
+        "y": 600,
         "wires": [
             [
                 "db0b232e.0e395"
@@ -2116,8 +2040,8 @@
         "createDir": true,
         "overwriteFile": "false",
         "encoding": "none",
-        "x": 837.9999561309814,
-        "y": 327,
+        "x": 1060,
+        "y": 600,
         "wires": [
             []
         ]
@@ -2168,11 +2092,11 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 310,
+        "x": 290,
         "y": 280,
         "wires": [
             [
-                "f1a7da5c.5ec128"
+                "63d0b996.dff838"
             ]
         ]
     },
@@ -2230,6 +2154,66 @@
         "wires": [
             [
                 "f7b43d11.1aeca"
+            ]
+        ]
+    },
+    {
+        "id": "84933057.c6b48",
+        "type": "inject",
+        "z": "2feab401.8786cc",
+        "name": "allowedUsers",
+        "topic": "",
+        "payload": "TELEGRAM_ADMIN",
+        "payloadType": "env",
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "x": 140,
+        "y": 1680,
+        "wires": [
+            [
+                "848c27af.ae41f8"
+            ]
+        ]
+    },
+    {
+        "id": "848c27af.ae41f8",
+        "type": "change",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "allowedUsers",
+                "pt": "global",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 350,
+        "y": 1680,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "98c899a2.a04778",
+        "type": "chatbot-authorized",
+        "z": "2feab401.8786cc",
+        "x": 750,
+        "y": 560,
+        "wires": [
+            [
+                "6239ba55.2a3ef4"
+            ],
+            [
+                "15d6290d.5bfd77"
             ]
         ]
     }

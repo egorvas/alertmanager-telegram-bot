@@ -218,14 +218,14 @@ module.exports = {
       telegram: {
         'Alertmanager': {
           token: process.env.TELEGRAM_TOKEN,
-          authorizedUsernames: process.env.TELEGRAM_ADMIN,
+          usernames: process.env.TELEGRAM_ADMIN,
           polling: 1000,
           connectMode:'polling',
           parseMode: 'html'
         },
         'AlertmanagerTest': {
           token: process.env.TELEGRAM_TOKEN_TEST,
-          authorizedUsernames: process.env.TELEGRAM_ADMIN,
+          usernames: process.env.TELEGRAM_ADMIN,
           polling: 1000,
           connectMode:'polling',
           parseMode: 'html'

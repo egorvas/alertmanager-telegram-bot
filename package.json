@@ -10,6 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "node-red": "^1.0.6",
-    "node-red-contrib-chatbot": "^0.19.0"
+    "node-red-contrib-chatbot": "^0.19.2"
   }
 }
