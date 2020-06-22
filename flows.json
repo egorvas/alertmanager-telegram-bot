@@ -522,7 +522,7 @@
         "type": "function",
         "z": "2feab401.8786cc",
         "name": "duration",
-        "func": "let miliseconds = new Date().getTime()-Date.parse(msg.payload.startsAt)\nlet days = Math.floor(miliseconds/(24*60*60*1000))\nmiliseconds = miliseconds - (24*60*60*1000) * days\nlet hours = Math.floor(miliseconds/(60*60*1000))\nmiliseconds = miliseconds - (60*60*1000) * hours\nlet minutes = Math.floor(miliseconds/(60*1000))\nmiliseconds = miliseconds - (60*1000) * minutes\nlet seconds = Math.floor(miliseconds/(1000))\nmsg.payload.duration=`${days===0 ? \"\": days+ \" day\"+ (days===1 ? \" \":\"s \")}${days===0 && hours===0 ? \"\": hours+ \" hour\"+ (hours===1 ? \" \":\"s \")}${days===0 && hours===0 && minutes===0 ? \"\": minutes+ \" minute\"+ (minutes===1 ? \" \":\"s \")}${seconds} seconds`\nif (msg.payload.generatorURL==='' || msg.payload.generatorURL===undefined){\n    msg.payload.generatorURL=\"http://alertmanager.ds80.r60.info\";\n}\nreturn msg",
+        "func": "let miliseconds = new Date().getTime()-Date.parse(msg.payload.startsAt)\nlet days = Math.floor(miliseconds/(24*60*60*1000))\nmiliseconds = miliseconds - (24*60*60*1000) * days\nlet hours = Math.floor(miliseconds/(60*60*1000))\nmiliseconds = miliseconds - (60*60*1000) * hours\nlet minutes = Math.floor(miliseconds/(60*1000))\nmiliseconds = miliseconds - (60*1000) * minutes\nlet seconds = Math.floor(miliseconds/(1000))\nmsg.payload.duration=`${days===0 ? \"\": days+ \" day\"+ (days===1 ? \" \":\"s \")}${days===0 && hours===0 ? \"\": hours+ \" hour\"+ (hours===1 ? \" \":\"s \")}${days===0 && hours===0 && minutes===0 ? \"\": minutes+ \" minute\"+ (minutes===1 ? \" \":\"s \")}${seconds} seconds`\nmsg.generatorURL=msg.payload.generatorURL;\nreturn msg",
         "outputs": 1,
         "noerr": 0,
         "x": 1260,
@@ -1348,8 +1348,8 @@
             }
         ],
         "outputs": 1,
-        "x": 1850,
-        "y": 700,
+        "x": 2110,
+        "y": 640,
         "wires": [
             [
                 "9ada950.6dbe468"
@@ -1981,8 +1981,8 @@
             "b919b3a8.afe93",
             "64d2f4c6.83bb5c"
         ],
-        "x": 1955,
-        "y": 700,
+        "x": 2215,
+        "y": 640,
         "wires": []
     },
     {
@@ -2020,18 +2020,6 @@
         "name": "show alert",
         "buttons": [
             {
-                "type": "url",
-                "label": "📈 More Info",
-                "url": "{{payload.generatorURL}}",
-                "webViewHeightRatio": "tall",
-                "extensions": false,
-                "answer": "",
-                "alert": false
-            },
-            {
-                "type": "newline"
-            },
-            {
                 "type": "postback",
                 "label": "🔕 Mute for 1 hour",
                 "value": "%create_silence%1h%{{payload.labels.alertname}}%",
@@ -2057,11 +2045,11 @@
             }
         ],
         "message": "<b>Fire</b>🔥{{payload.labels.alertname}}\n{{payload.annotations.description}}\n<b>Count: </b>{{payload.annotations.count}}\n<b>Duration: </b>{{payload.duration}}",
-        "x": 1670,
+        "x": 1650,
         "y": 700,
         "wires": [
             [
-                "f7b43d11.1aeca"
+                "60921468.7d8dbc"
             ]
         ]
     },
@@ -2223,6 +2211,22 @@
         "wires": [
             [
                 "9cde96e9.32c8f8"
+            ]
+        ]
+    },
+    {
+        "id": "60921468.7d8dbc",
+        "type": "function",
+        "z": "2feab401.8786cc",
+        "name": "add url button if generatorURL exists",
+        "func": "if (msg.generatorURL!=='' && msg.generatorURL!==undefined){\n    msg.payload.buttons.unshift({type: 'url',\n       label: '📈 More Info',\n       url: msg.generatorURL,\n       webViewHeightRatio: 'tall',\n       extensions: false,\n       answer: '',\n       alert: false }, \n       { type: 'newline' });\n}\ndelete msg.generatorURL\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1890,
+        "y": 700,
+        "wires": [
+            [
+                "f7b43d11.1aeca"
             ]
         ]
     }
