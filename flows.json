@@ -2036,6 +2036,9 @@
                 "style": ""
             },
             {
+                "type": "newline"
+            },
+            {
                 "type": "postback",
                 "label": "🔔 Unmute",
                 "value": "%unmute%{{payload.labels.alertname}}%",
@@ -2219,7 +2222,7 @@
         "type": "function",
         "z": "2feab401.8786cc",
         "name": "add url button if generatorURL exists",
-        "func": "if (msg.generatorURL!=='' && msg.generatorURL!==undefined){\n    msg.payload.buttons.unshift({type: 'url',\n       label: '📈 More Info',\n       url: msg.generatorURL,\n       webViewHeightRatio: 'tall',\n       extensions: false,\n       answer: '',\n       alert: false }, \n       { type: 'newline' });\n}\ndelete msg.generatorURL\nreturn msg;",
+        "func": "if (msg.generatorURL!=='' && msg.generatorURL!==undefined){\n    msg.payload.buttons.push({type: 'url',\n       label: '📈 More Info',\n       url: msg.generatorURL,\n       webViewHeightRatio: 'tall',\n       extensions: false,\n       answer: '',\n       alert: false });\n}\ndelete msg.generatorURL\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "x": 1890,
