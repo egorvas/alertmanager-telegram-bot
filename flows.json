@@ -215,12 +215,12 @@
             },
             {
                 "t": "cont",
-                "v": "create_silence",
+                "v": "cr_s%",
                 "vt": "str"
             },
             {
                 "t": "cont",
-                "v": "expire_silence",
+                "v": "exp_s%",
                 "vt": "str"
             },
             {
@@ -237,7 +237,7 @@
         "checkall": "false",
         "repair": false,
         "outputs": 8,
-        "x": 790,
+        "x": 830,
         "y": 260,
         "wires": [
             [
@@ -279,7 +279,7 @@
         "persist": false,
         "proxy": "",
         "authType": "",
-        "x": 1100,
+        "x": 1140,
         "y": 240,
         "wires": [
             [
@@ -305,7 +305,7 @@
         "checkall": "false",
         "repair": false,
         "outputs": 2,
-        "x": 1270,
+        "x": 1310,
         "y": 240,
         "wires": [
             [
@@ -327,7 +327,7 @@
             }
         ],
         "language": "none",
-        "x": 1590,
+        "x": 1630,
         "y": 240,
         "wires": [
             [
@@ -357,7 +357,7 @@
         "checkall": "true",
         "repair": false,
         "outputs": 2,
-        "x": 990,
+        "x": 1030,
         "y": 560,
         "wires": [
             [
@@ -379,7 +379,7 @@
             }
         ],
         "language": "none",
-        "x": 1667.9999561309814,
+        "x": 1707.9999561309814,
         "y": 572.0000009536743,
         "wires": [
             [
@@ -395,7 +395,7 @@
         "func": "let chats = global.get(\"chats\")\nlet index = chats.indexOf(msg.payload.chatId);\nwhile (index !== -1){\n    chats.splice(index, 1);\n    index = chats.indexOf(msg.payload.chatId);\n}\nmsg.payload=chats;\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 1050,
+        "x": 1090,
         "y": 160,
         "wires": [
             [
@@ -414,7 +414,7 @@
             }
         ],
         "language": "none",
-        "x": 1010,
+        "x": 1050,
         "y": 200,
         "wires": [
             [
@@ -442,7 +442,7 @@
         "checkall": "false",
         "repair": false,
         "outputs": 2,
-        "x": 520,
+        "x": 560,
         "y": 280,
         "wires": [
             [
@@ -462,7 +462,7 @@
             "c835342b.330108",
             "389bd48e.40459c"
         ],
-        "x": 1435,
+        "x": 1475,
         "y": 260,
         "wires": []
     },
@@ -627,7 +627,7 @@
             {
                 "type": "postback",
                 "label": "🗑 Expire",
-                "value": "%expire_silence%{{payload.id}}%",
+                "value": "exp_s%{{payload.id}}",
                 "answer": "",
                 "alert": false,
                 "style": ""
@@ -668,7 +668,7 @@
         "type": "function",
         "z": "2feab401.8786cc",
         "name": "get alertname",
-        "func": "msg.silence={}\nmsg.silence.alertName=msg.payload.content.split(\"%\")[3];\nlet hms = msg.payload.content.split(\"%\")[2]\nlet seconds = 0;\nlet hmsSplit;\nif (hms.includes('h')){\n    hmsSplit = hms.split('h');\n    seconds += +hmsSplit[0] * 3600;\n    hms = hmsSplit[1];\n}\nif (hms.includes('m')){\n    hmsSplit = hms.split('m');\n    seconds += +hmsSplit[0] * 60;\n    hms = hmsSplit[1];\n}\nif (hms.includes('s')){\n    hmsSplit = hms.split('s');\n    seconds += +hmsSplit[0];\n}\nif (msg.originalMessage.from.username===undefined){\n    msg.silence.creator=msg.originalMessage.from.first_name\n    if (msg.originalMessage.from.last_name!==undefined) msg.silence.creator+=\" \"+msg.originalMessage.from.last_name\n}else{\n    msg.silence.creator=\"@\"+msg.originalMessage.from.username\n}\nmsg.silence.start=new Date();\nmsg.silence.end=new Date(new Date().getTime()+seconds*1000);\nreturn msg;",
+        "func": "msg.silence={}\nmsg.silence.alertName=msg.payload.content.split(\"%\")[2];\nlet hms = msg.payload.content.split(\"%\")[1]\nlet seconds = 0;\nlet hmsSplit;\nif (hms.includes('h')){\n    hmsSplit = hms.split('h');\n    seconds += +hmsSplit[0] * 3600;\n    hms = hmsSplit[1];\n}\nif (hms.includes('m')){\n    hmsSplit = hms.split('m');\n    seconds += +hmsSplit[0] * 60;\n    hms = hmsSplit[1];\n}\nif (hms.includes('s')){\n    hmsSplit = hms.split('s');\n    seconds += +hmsSplit[0];\n}\nif (msg.originalMessage.from.username===undefined){\n    msg.silence.creator=msg.originalMessage.from.first_name\n    if (msg.originalMessage.from.last_name!==undefined) msg.silence.creator+=\" \"+msg.originalMessage.from.last_name\n}else{\n    msg.silence.creator=\"@\"+msg.originalMessage.from.username\n}\nmsg.silence.start=new Date();\nmsg.silence.end=new Date(new Date().getTime()+seconds*1000);\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "x": 180,
@@ -703,7 +703,7 @@
         "links": [
             "5dc4fa82.abd674"
         ],
-        "x": 1572.9999561309814,
+        "x": 1612.9999561309814,
         "y": 367,
         "wires": []
     },
@@ -855,7 +855,7 @@
             "33b5fc62.d73874",
             "9e3be4ac.65d138"
         ],
-        "x": 1572.9999561309814,
+        "x": 1612.9999561309814,
         "y": 407,
         "wires": []
     },
@@ -880,7 +880,7 @@
         "type": "function",
         "z": "2feab401.8786cc",
         "name": "get silence id",
-        "func": "msg.payload.id=msg.payload.content.split(\"%\")[2];\nreturn msg;",
+        "func": "msg.payload.id=msg.payload.content.split(\"%\")[1];\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "x": 910,
@@ -964,7 +964,7 @@
             "dd1eef8f.4087f",
             "e2d7d754.9a7068"
         ],
-        "x": 1572.9999561309814,
+        "x": 1612.9999561309814,
         "y": 447,
         "wires": []
     },
@@ -1026,7 +1026,7 @@
         "type": "function",
         "z": "2feab401.8786cc",
         "name": "get alertname",
-        "func": "msg.payload.alertName=msg.payload.content.split(\"%\")[2];\nmsg.command=msg.payload.content.split(\"%\")[1];\nreturn msg;",
+        "func": "msg.payload.alertName=msg.payload.content.split(\"%\")[2];\nmsg.command=msg.payload.content.split(\"%\")[0];\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "x": 180,
@@ -1129,7 +1129,7 @@
         "links": [
             "78352a09.7edfd4"
         ],
-        "x": 1572.9999561309814,
+        "x": 1612.9999561309814,
         "y": 327,
         "wires": []
     },
@@ -1190,7 +1190,7 @@
             "b919b3a8.afe93",
             "64d2f4c6.83bb5c"
         ],
-        "x": 1835,
+        "x": 1875,
         "y": 200,
         "wires": []
     },
@@ -1222,7 +1222,7 @@
         "func": "let chats = global.get(\"chats\");\nif (!chats.includes(msg.payload.chatId)){\n    chats.push(msg.payload.chatId);\n}\nmsg.payload=chats;\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 1260,
+        "x": 1300,
         "y": 520,
         "wires": [
             [
@@ -1311,7 +1311,7 @@
         "z": "2feab401.8786cc",
         "bot": "df38975b.361008",
         "botProduction": "d45d71eb.8ac9a",
-        "x": 90,
+        "x": 130,
         "y": 280,
         "wires": [
             [
@@ -1386,7 +1386,7 @@
             }
         ],
         "language": "none",
-        "x": 1650,
+        "x": 1690,
         "y": 520,
         "wires": [
             [
@@ -1497,7 +1497,7 @@
             "5a89339e.a6b46c",
             "3abdf12.b7dac0e"
         ],
-        "x": 1455,
+        "x": 1495,
         "y": 540,
         "wires": []
     },
@@ -1510,7 +1510,7 @@
             "5a89339e.a6b46c",
             "3abdf12.b7dac0e"
         ],
-        "x": 1215,
+        "x": 1255,
         "y": 160,
         "wires": []
     },
@@ -1887,7 +1887,7 @@
         "id": "15d6290d.5bfd77",
         "type": "chatbot-log",
         "z": "2feab401.8786cc",
-        "x": 910,
+        "x": 950,
         "y": 600,
         "wires": [
             [
@@ -1946,7 +1946,7 @@
             {
                 "type": "postback",
                 "label": "🔕 Mute for 1 hour",
-                "value": "%create_silence%1h%{{payload.labels.alertname}}%",
+                "value": "cr_s%1h%{{payload.labels.alertname}}",
                 "answer": "",
                 "alert": false,
                 "style": ""
@@ -1954,7 +1954,7 @@
             {
                 "type": "postback",
                 "label": "🔕 Mute for 1 day",
-                "value": "%create_silence%24h%{{payload.labels.alertname}}%",
+                "value": "cr_s%24h%{{payload.labels.alertname}}",
                 "answer": "",
                 "alert": false,
                 "style": ""
@@ -2040,7 +2040,7 @@
         "createDir": true,
         "overwriteFile": "false",
         "encoding": "none",
-        "x": 1060,
+        "x": 1100,
         "y": 600,
         "wires": [
             []
@@ -2092,7 +2092,7 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 290,
+        "x": 330,
         "y": 280,
         "wires": [
             [
@@ -2158,55 +2158,10 @@
         ]
     },
     {
-        "id": "84933057.c6b48",
-        "type": "inject",
-        "z": "2feab401.8786cc",
-        "name": "allowedUsers",
-        "topic": "",
-        "payload": "TELEGRAM_ADMIN",
-        "payloadType": "env",
-        "repeat": "",
-        "crontab": "",
-        "once": true,
-        "onceDelay": 0.1,
-        "x": 140,
-        "y": 1680,
-        "wires": [
-            [
-                "848c27af.ae41f8"
-            ]
-        ]
-    },
-    {
-        "id": "848c27af.ae41f8",
-        "type": "change",
-        "z": "2feab401.8786cc",
-        "name": "",
-        "rules": [
-            {
-                "t": "set",
-                "p": "allowedUsers",
-                "pt": "global",
-                "to": "payload",
-                "tot": "msg"
-            }
-        ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 350,
-        "y": 1680,
-        "wires": [
-            []
-        ]
-    },
-    {
         "id": "98c899a2.a04778",
         "type": "chatbot-authorized",
         "z": "2feab401.8786cc",
-        "x": 750,
+        "x": 790,
         "y": 560,
         "wires": [
             [
