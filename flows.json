@@ -147,7 +147,7 @@
         "y": 700,
         "wires": [
             [
-                "eea4a91f.123f38"
+                "f556ea4f.e21e78"
             ]
         ]
     },
@@ -163,13 +163,6 @@
                 "pt": "msg",
                 "to": "payload.alerts",
                 "tot": "msg"
-            },
-            {
-                "t": "set",
-                "p": "payload",
-                "pt": "msg",
-                "to": "chats",
-                "tot": "global"
             }
         ],
         "action": "",
@@ -181,7 +174,7 @@
         "y": 700,
         "wires": [
             [
-                "292158dd.0d9c48"
+                "94f7c424.f4a888"
             ]
         ]
     },
@@ -194,13 +187,23 @@
         "propertyType": "msg",
         "rules": [
             {
+                "t": "cont",
+                "v": "/setTags",
+                "vt": "str"
+            },
+            {
                 "t": "eq",
-                "v": "/stop",
+                "v": "/tags",
                 "vt": "str"
             },
             {
                 "t": "eq",
                 "v": "/chats",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "/stop",
                 "vt": "str"
             },
             {
@@ -236,15 +239,21 @@
         ],
         "checkall": "false",
         "repair": false,
-        "outputs": 8,
+        "outputs": 10,
         "x": 830,
         "y": 260,
         "wires": [
             [
-                "14ae312d.96622f"
+                "b9f9efc6.3aa53"
+            ],
+            [
+                "6f092946.ee3b68"
             ],
             [
                 "bc5f3890.aa03c8"
+            ],
+            [
+                "14ae312d.96622f"
             ],
             [
                 "564583c3.1598cc"
@@ -392,10 +401,10 @@
         "type": "function",
         "z": "2feab401.8786cc",
         "name": "remove chatId from global chats",
-        "func": "let chats = global.get(\"chats\")\nlet index = chats.indexOf(msg.payload.chatId);\nwhile (index !== -1){\n    chats.splice(index, 1);\n    index = chats.indexOf(msg.payload.chatId);\n}\nmsg.payload=chats;\nreturn msg;",
+        "func": "let chats = global.get(\"chats\")\nlet ids = chats.map(x=>x.ids)\nlet index = ids.indexOf(msg.payload.chatId);\nwhile (index !== -1){\n    chats.splice(index, 1);\n    index = ids.indexOf(msg.payload.chatId);\n}\nmsg.payload=chats;\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 1090,
+        "x": 1270,
         "y": 160,
         "wires": [
             [
@@ -410,7 +419,7 @@
         "name": "List of chats",
         "message": [
             {
-                "message": "{{global.chats}}"
+                "message": "{{payload.chats}}"
             }
         ],
         "language": "none",
@@ -427,8 +436,8 @@
         "type": "switch",
         "z": "2feab401.8786cc",
         "name": "check is chat in global chats",
-        "property": "chats",
-        "propertyType": "global",
+        "property": "payload.chats",
+        "propertyType": "msg",
         "rules": [
             {
                 "t": "cont",
@@ -442,7 +451,7 @@
         "checkall": "false",
         "repair": false,
         "outputs": 2,
-        "x": 560,
+        "x": 600,
         "y": 280,
         "wires": [
             [
@@ -474,8 +483,8 @@
         "func": "let miliseconds = new Date().getTime()-Date.parse(msg.payload.startsAt)\nlet days = Math.floor(miliseconds/(24*60*60*1000))\nmiliseconds = miliseconds - (24*60*60*1000) * days\nlet hours = Math.floor(miliseconds/(60*60*1000))\nmiliseconds = miliseconds - (60*60*1000) * hours\nlet minutes = Math.floor(miliseconds/(60*1000))\nmiliseconds = miliseconds - (60*1000) * minutes\nlet seconds = Math.floor(miliseconds/(1000))\nmsg.payload.duration=`${days===0 ? \"\": days+ \" day\"+ (days===1 ? \" \":\"s \")}${days===0 && hours===0 ? \"\": hours+ \" hour\"+ (hours===1 ? \" \":\"s \")}${days===0 && hours===0 && minutes===0 ? \"\": minutes+ \" minute\"+ (minutes===1 ? \" \":\"s \")}${seconds} seconds`\nmsg.generatorURL=msg.payload.generatorURL;\nreturn msg",
         "outputs": 1,
         "noerr": 0,
-        "x": 1260,
-        "y": 700,
+        "x": 1380,
+        "y": 760,
         "wires": [
             [
                 "84d5044e.6ff068"
@@ -1143,7 +1152,8 @@
             "9ada950.6dbe468",
             "a2842c24.90f62",
             "f412657.3327a98",
-            "9ed39120.79f03"
+            "9ed39120.79f03",
+            "d73955c2.6214f8"
         ],
         "x": 1695,
         "y": 980,
@@ -1219,7 +1229,7 @@
         "type": "function",
         "z": "2feab401.8786cc",
         "name": "save chatId to global chats",
-        "func": "let chats = global.get(\"chats\");\nif (!chats.includes(msg.payload.chatId)){\n    chats.push(msg.payload.chatId);\n}\nmsg.payload=chats;\nreturn msg;",
+        "func": "let chats = global.get(\"chats\");\nif (!chats.map(x=>x.id).includes(msg.payload.chatId)){\n    chats.push({id:msg.payload.chatId, tags:[\"all\"]});\n}\nmsg.payload=chats;\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "x": 1300,
@@ -1242,8 +1252,8 @@
         "arraySpltType": "len",
         "stream": false,
         "addname": "",
-        "x": 650,
-        "y": 700,
+        "x": 670,
+        "y": 780,
         "wires": [
             [
                 "561c0a37.a69324"
@@ -1382,7 +1392,7 @@
         "name": "Show /help",
         "message": [
             {
-                "message": "I'm a Telegram Bot for Alert-system. I will notify you about alerts.\nYou can also ask me about my /alerts & /silences\n\nAvailable commands:\n/start - Subscribe for alerts.\n/stop - Unsubscribe for alerts.\n/alerts - List all alerts.\n/silences - List all silences.\n/chats - List all users and group chats that subscribed.\n/help - Show this message"
+                "message": "I'm a Telegram Bot for Alert-system. I will notify you about alerts.\nYou can also ask me about my /alerts & /silences\n\nAvailable commands:\n/start - Subscribe for alerts.\n/stop - Unsubscribe for alerts.\n/alerts - List all alerts.\n/silences - List all silences.\n/chats - List all users and group chats that subscribed.\n/tags Show list of tags for current chat\n/setTags Set space separated list of tags\n/help - Show this message\n"
             }
         ],
         "language": "none",
@@ -1477,7 +1487,9 @@
         "links": [
             "ba7b7dd3.86549",
             "526a1cc.a418fe4",
-            "333b2ac3.116bb6"
+            "333b2ac3.116bb6",
+            "5414c8b7.e49c78",
+            "12d2d9e6.9f4c46"
         ],
         "x": 1015,
         "y": 1660,
@@ -1510,7 +1522,7 @@
             "5a89339e.a6b46c",
             "3abdf12.b7dac0e"
         ],
-        "x": 1255,
+        "x": 1435,
         "y": 160,
         "wires": []
     },
@@ -2096,7 +2108,7 @@
         "y": 280,
         "wires": [
             [
-                "63d0b996.dff838"
+                "89317154.cba9c"
             ]
         ]
     },
@@ -2169,6 +2181,193 @@
             ],
             [
                 "15d6290d.5bfd77"
+            ]
+        ]
+    },
+    {
+        "id": "89317154.cba9c",
+        "type": "function",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "func": "let chats = global.get(\"chats\")\nmsg.payload.chats = chats.map(x=>x.id)\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 440,
+        "y": 360,
+        "wires": [
+            [
+                "63d0b996.dff838"
+            ]
+        ]
+    },
+    {
+        "id": "c938abc7.1c5e18",
+        "type": "chatbot-message",
+        "z": "2feab401.8786cc",
+        "name": "List of tags for the current chat",
+        "message": [
+            {
+                "message": "List of current chat tags: {{payload.tags}}"
+            }
+        ],
+        "language": "none",
+        "x": 1430,
+        "y": 100,
+        "wires": [
+            [
+                "a2842c24.90f62"
+            ]
+        ]
+    },
+    {
+        "id": "6f092946.ee3b68",
+        "type": "function",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "func": "let chats = global.get(\"chats\")\nmsg.payload.tags = chats.find(x=>x.id===msg.payload.chatId).tags\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1210,
+        "y": 100,
+        "wires": [
+            [
+                "c938abc7.1c5e18"
+            ]
+        ]
+    },
+    {
+        "id": "e53b2d4d.58782",
+        "type": "function",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "func": "let chats = global.get(\"chats\")\nconst index = chats.findIndex(x=> x.id===msg.payload.chatId)\nchats[index]={id:msg.payload.chatId, tags:msg.payload.arguments}\nmsg.payload=chats;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1070,
+        "y": 40,
+        "wires": [
+            [
+                "12d2d9e6.9f4c46"
+            ]
+        ]
+    },
+    {
+        "id": "12d2d9e6.9f4c46",
+        "type": "link out",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "links": [
+            "5a89339e.a6b46c",
+            "3abdf12.b7dac0e"
+        ],
+        "x": 1175,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "b9f9efc6.3aa53",
+        "type": "switch",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "property": "payload.arguments",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nempty"
+            },
+            {
+                "t": "empty"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 950,
+        "y": 100,
+        "wires": [
+            [
+                "e53b2d4d.58782"
+            ],
+            [
+                "8eb7026.4ae28"
+            ]
+        ]
+    },
+    {
+        "id": "8eb7026.4ae28",
+        "type": "chatbot-message",
+        "z": "2feab401.8786cc",
+        "name": "Please provide any tag",
+        "message": [
+            {
+                "message": "Please provide any tag"
+            }
+        ],
+        "language": "none",
+        "x": 1400,
+        "y": 40,
+        "wires": [
+            [
+                "a2842c24.90f62"
+            ]
+        ]
+    },
+    {
+        "id": "f556ea4f.e21e78",
+        "type": "function",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "func": "let chats = global.get(\"chats\")\nlet tags = chats.find(x=>x.id===msg.chatId).tags\nlet annotationTags = msg.payload.annotations.tags;\nif (annotationTags===undefined || annotationTags.length===0){\n    annotationTags = [\"all\"]    \n}    \nif (tags.length===0){\n    tags=[\"all\"]\n}\nmsg.hasTag = tags.every(x => annotationTags.includes(x))\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1250,
+        "y": 640,
+        "wires": [
+            [
+                "c956735d.53525"
+            ]
+        ]
+    },
+    {
+        "id": "94f7c424.f4a888",
+        "type": "function",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "func": "let chats = global.get(\"chats\")\nmsg.payload=chats.map(x=>x.id)\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 570,
+        "y": 640,
+        "wires": [
+            [
+                "292158dd.0d9c48"
+            ]
+        ]
+    },
+    {
+        "id": "c956735d.53525",
+        "type": "switch",
+        "z": "2feab401.8786cc",
+        "name": "",
+        "property": "hasTag",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1260,
+        "y": 700,
+        "wires": [
+            [],
+            [
+                "eea4a91f.123f38"
             ]
         ]
     }
