@@ -282,7 +282,7 @@
         "name": "get alerts",
         "method": "GET",
         "ret": "obj",
-        "paytoqs": false,
+        "paytoqs": "ignore",
         "url": "{{{alertmanagerUrl}}}/api/v2/alerts?silenced=false&inhibited=false&active=true",
         "tls": "",
         "persist": false,
@@ -321,7 +321,7 @@
                 "ccec9243.3389b"
             ],
             [
-                "90833206.57ae6"
+                "a34b9bb0.cd18c8"
             ]
         ]
     },
@@ -440,8 +440,8 @@
             "c835342b.330108",
             "389bd48e.40459c"
         ],
-        "x": 1475,
-        "y": 260,
+        "x": 1615,
+        "y": 280,
         "wires": []
     },
     {
@@ -1178,13 +1178,13 @@
         "type": "inject",
         "z": "2feab401.8786cc",
         "name": "resetChats",
-        "topic": "",
-        "payload": "[]",
-        "payloadType": "json",
         "repeat": "",
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[]",
+        "payloadType": "json",
         "x": 120,
         "y": 1600,
         "wires": [
@@ -1303,13 +1303,13 @@
         "type": "inject",
         "z": "2feab401.8786cc",
         "name": "chats",
-        "topic": "",
-        "payload": "",
-        "payloadType": "str",
         "repeat": "",
         "crontab": "",
         "once": true,
         "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "str",
         "x": 110,
         "y": 1760,
         "wires": [
@@ -2289,6 +2289,8 @@
         "func": "let chats = global.get(\"chats\")\nlet tags = chats.find(x=>x.id===msg.chatId).tags\nlet labelsTags = msg.payload.labels.tags;\nif (labelsTags===undefined || labelsTags.length===0){\n    labelsTags = \"all\"    \n}    \nif (tags.length===0){\n    tags=[\"all\"]\n}\nmsg.hasTags = tags.every(x => labelsTags.split(\",\").includes(x))\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
+        "initialize": "",
+        "finalize": "",
         "x": 1090,
         "y": 760,
         "wires": [
@@ -2305,6 +2307,8 @@
         "func": "let chats = global.get(\"chats\")\nmsg.payload=chats.map(x=>x.id)\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
+        "initialize": "",
+        "finalize": "",
         "x": 500,
         "y": 700,
         "wires": [
@@ -2406,6 +2410,8 @@
         "func": "let alert = msg.payload.find(alert => alert.annotations.id === msg.silence.id);\nmsg.silence.alertname=alert.labels.alertname\nmsg.silence.tags=alert.labels.tags\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
+        "initialize": "",
+        "finalize": "",
         "x": 420,
         "y": 1220,
         "wires": [
@@ -2471,6 +2477,24 @@
             ],
             [
                 "98c899a2.a04778"
+            ]
+        ]
+    },
+    {
+        "id": "a34b9bb0.cd18c8",
+        "type": "function",
+        "z": "2feab401.8786cc",
+        "name": "set chatId",
+        "func": "msg.chatId = msg.originalMessage.chatId\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 1500,
+        "y": 280,
+        "wires": [
+            [
+                "90833206.57ae6"
             ]
         ]
     }
