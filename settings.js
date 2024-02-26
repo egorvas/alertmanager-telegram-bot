@@ -214,17 +214,9 @@ module.exports = {
     // can be accessed in a function block as:
     //    global.get("os")
     functionGlobalContext: {
-      environment: process.env.TELEGRAM_ENV || "production",
       telegram: {
         'Alertmanager': {
           token: process.env.TELEGRAM_TOKEN,
-          usernames: process.env.TELEGRAM_ADMIN,
-          polling: 1000,
-          connectMode:'polling',
-          parseMode: 'html'
-        },
-        'AlertmanagerTest': {
-          token: process.env.TELEGRAM_TOKEN_TEST,
           usernames: process.env.TELEGRAM_ADMIN,
           polling: 1000,
           connectMode:'polling',
