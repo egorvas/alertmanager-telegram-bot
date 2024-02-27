@@ -1905,7 +1905,7 @@
         "type": "function",
         "z": "2feab401.8786cc",
         "name": "check tags",
-        "func": "let chats = global.get(\"chats\")\nlet id;\nlet topic;\nif (typeof msg.chatId === \"string\"){\n    id = Number(msg.chatId.split(\"_\")[0]);\n    topic = Number(msg.chatId.split(\"_\")[1]);\n    msg.message_thread_id=topic;\n}else{\n    id = msg.chatId;\n    topic = msg.message_thread_id || 0;\n}\nlet tags = chats.find(x => x.id === id && x.topic === topic).tags\nlet labelsTags = msg.payload.labels.tags;\nif (labelsTags===undefined || labelsTags.length===0){\n    labelsTags = \"all\"    \n}    \nif (tags.length===0){\n    tags=[\"all\"]\n}\nmsg.hasTags = tags.some(x => labelsTags.split(\",\").includes(x))\nreturn msg;",
+        "func": "let chats = global.get(\"chats\")\nlet id;\nlet topic;\nif (typeof msg.chatId === \"string\"){\n    id = Number(msg.chatId.split(\"_\")[0]);\n    topic = Number(msg.chatId.split(\"_\")[1]);\n    msg.message_thread_id=topic;\n}else{\n    id = msg.chatId;\n    topic = msg.message_thread_id || 0;\n}\nmsg.hasTags = false;\nlet findTags = chats.find(x => x.id === id && x.topic === topic);\nif (findTags){\n    let tags = findTags.tags\n    let labelsTags = msg.payload.labels.tags;\n    if (labelsTags===undefined || labelsTags.length===0){\n        labelsTags = \"all\"    \n    }    \n    if (tags.length===0){\n        tags=[\"all\"]\n    }\n    msg.hasTags = tags.some(x => labelsTags.split(\",\").includes(x)) \n}\nreturn msg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
